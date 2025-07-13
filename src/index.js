@@ -3,9 +3,9 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
 import { BrowserRouter as Router } from "react-router-dom";
-import { StatProvider } from "./components/context/StateProvider";
-import { initialState } from "./components/context/initialState";
-import reducer from "./components/context/reducer";
+import { StatProvider } from "./context/StateProvider";
+import { initialState } from "./context/initialState";
+import { reducer } from "./context/reducer";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

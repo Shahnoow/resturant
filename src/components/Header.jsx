@@ -6,8 +6,8 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { app } from "../firebase.config";
-import { useStateValue } from "./context/StateProvider";
-import { actionType } from "./context/reducer";
+import { useStateValue } from "../context/StateProvider";
+import { actionType } from "../context/reducer";
 
 const Header = () => {
   const firebaseAuth = getAuth(app);
@@ -43,7 +43,7 @@ const Header = () => {
   };
 
   return (
-    <header className="fixed z-50 w-screen p-6 px-16">
+    <header className="fixed z-50 w-screen p-3 px-4 md:p-6 md:px-16">
       {/* Desktop & Tablet */}
       <div className="items-center justify-between hidden w-full h-full md:flex">
         <Link to={"/"} className="flex items-center gap-2">
@@ -151,7 +151,7 @@ const Header = () => {
               exit={{ opacity: 0, scale: 0.6 }}
               className="absolute right-0 flex flex-col w-40 rounded-lg shadow-xl bg-gray-50 top-12"
             >
-              {user && user.email === "vetrivel.galaxy@gmail.com" && (
+              {user && user.email === "shahnawazjawed9@gmail.com" && (
                 <Link to={"/createItem"}>
                   <p className="flex items-center gap-3 px-4 py-2 text-base transition-all duration-100 ease-in-out cursor-pointer hover:bg-slate-100 text-textColor">
                     New Item <MdAdd />
