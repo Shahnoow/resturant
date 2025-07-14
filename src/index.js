@@ -5,7 +5,7 @@ import App from "./App";
 import { BrowserRouter as Router } from "react-router-dom";
 import { StatProvider } from "./context/StateProvider";
 import { initialState } from "./context/initialState";
-import { reducer } from "./context/reducer";
+import reducer from "./context/reducer";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

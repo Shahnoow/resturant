@@ -51,12 +51,12 @@ const HomeContainer = () => {
           alt="hero-bg"
         />
 
-        <div className="absolute top-0 left-0 flex flex-wrap items-center justify-center w-full h-full gap-4 py-4 lg:px-32">
+        <div className="absolute top-0 left-0 flex flex-wrap items-center justify-center w-full h-full gap-4 py-4 lg:px-20">
           {heroData &&
             heroData.map((n) => (
               <div
                 key={n.id}
-                className="flex flex-col items-center justify-center p-4 lg:w-40 bg-cardOverlay backdrop-blur-md rounded-3xl drop-shadow-lg"
+                className="flex flex-col items-center justify-center p-4 lg:w-190 bg-cardOverlay backdrop-blur-md rounded-3xl drop-shadow-lg"
               >
                 <img
                   src={n.imageSrc}

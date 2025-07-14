@@ -9,13 +9,14 @@ import { getAllFoodItems } from "./utils/supabaseFunction";
 import { actionType } from "./context/reducer";
 
 function App() {
-  const [{ foodItems }, dispatch] = useStateValue;
+  const [{ food_items }, dispatch] = useStateValue();
 
   const fetchData = async () => {
     await getAllFoodItems().then((data) => {
+      // console.log(data);
       dispatch({
         type: actionType.SET_FOOD_ITEMS,
-        foodItems: data,
+        food_items: data,
       });
     });
   };
@@ -26,10 +27,10 @@ function App() {
 
   return (
     <AnimatePresence exitBeforeEnter>
-      <div className="w-screen h-auto flex flex-col bg-primary">
+      <div className="flex flex-col w-screen h-auto bg-primary">
         <Header />
 
-        <main className="mt-14 md:mt-20 px-4 md:px-16 py-4 w-full">
+        <main className="w-full px-4 py-4 mt-14 md:mt-20 md:px-16">
           <Routes>
             <Route path="/*" element={<MainContainer />} />
             <Route path="/createItem" element={<CreateContainer />} />

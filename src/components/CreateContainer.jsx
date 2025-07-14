@@ -10,6 +10,9 @@ import {
 import { categories } from "../utils/data";
 import Loader from "./Loader";
 import { supabase } from "../supabaseClient";
+import { useStateValue } from "../context/StateProvider";
+import { getAllFoodItems } from "../utils/supabaseFunction";
+import { actionType } from "../context/reducer";
 
 const CreateContainer = () => {
   const [title, setTitle] = useState("");
@@ -21,6 +24,7 @@ const CreateContainer = () => {
   const [alertStatus, setAlertStatus] = useState("danger");
   const [msg, setMsg] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [{ food_items }, dispatch] = useStateValue();
 
   const uploadImage = async (e) => {
     setIsLoading(true);
@@ -140,6 +144,7 @@ const CreateContainer = () => {
         setIsLoading(false);
       }, 4000);
     }
+    fetchData();
   };
 
   const clearData = () => {
@@ -148,6 +153,16 @@ const CreateContainer = () => {
     setCalories("");
     setPrice("");
     setCategory(null);
+  };
+
+  const fetchData = async () => {
+    await getAllFoodItems().then((data) => {
+      console.log(data);
+      dispatch({
+        type: actionType.SET_FOOD_ITEMS,
+        food_items: data,
+      });
+    });
   };
 
   return (
@@ -185,7 +200,7 @@ const CreateContainer = () => {
         <div className="w-full">
           <select
             onChange={(e) => setCategory(e.target.value)}
-            className="outline-none w-full text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer"
+            className="w-full p-2 text-base border-b-2 border-gray-200 rounded-md outline-none cursor-pointer"
           >
             <option value="" className="bg-white">
               Select Category
@@ -205,16 +220,16 @@ const CreateContainer = () => {
         </div>
 
         {/* Image Upload */}
-        <div className="group flex justify-center items-center flex-col border-2 border-dotted border-gray-300 w-full h-225 md:h-340 cursor-pointer rounded-lg">
+        <div className="flex flex-col items-center justify-center w-full border-2 border-gray-300 border-dotted rounded-lg cursor-pointer group h-225 md:h-340">
           {isLoading ? (
             <Loader />
           ) : (
             <>
               {!imageAsset ? (
                 <>
-                  <label className="w-full h-full flex flex-col items-center justify-center cursor-pointer">
-                    <div className="w-full h-full flex flex-col items-center justify-center gap-2">
-                      <MdCloudUpload className="text-gray-500 text-3xl hover:text-gray-700" />
+                  <label className="flex flex-col items-center justify-center w-full h-full cursor-pointer">
+                    <div className="flex flex-col items-center justify-center w-full h-full gap-2">
+                      <MdCloudUpload className="text-3xl text-gray-500 hover:text-gray-700" />
                       <p className="text-gray-500 hover:text-gray-700">
                         Click here to upload
                       </p>
@@ -234,11 +249,11 @@ const CreateContainer = () => {
                     <img
                       src={imageAsset}
                       alt="uploaded"
-                      className="w-full h-full object-cover"
+                      className="object-cover w-full h-full"
                     />
                     <button
                       type="button"
-                      className="absolute bottom-3 right-3 p-3 rounded-full bg-red-500 text-xl cursor-pointer outline-none hover:shadow-md transition-all"
+                      className="absolute p-3 text-xl transition-all bg-red-500 rounded-full outline-none cursor-pointer bottom-3 right-3 hover:shadow-md"
                       onClick={deleteImage}
                     >
                       <MdDelete className="text-white" />
@@ -251,27 +266,27 @@ const CreateContainer = () => {
         </div>
 
         {/* Calories and Price */}
-        <div className="w-full flex flex-col md:flex-row items-center gap-3">
-          <div className="w-full py-2 border-b border-gray-300 flex items-center gap-2">
-            <MdFoodBank className="text-gray-700 text-2xl" />
+        <div className="flex flex-col items-center w-full gap-3 md:flex-row">
+          <div className="flex items-center w-full gap-2 py-2 border-b border-gray-300">
+            <MdFoodBank className="text-2xl text-gray-700" />
             <input
               type="text"
               required
               value={calories}
               onChange={(e) => setCalories(e.target.value)}
               placeholder="Calories"
-              className="w-full text-lg bg-transparent outline-none border-none placeholder:text-gray-400 text-textColor"
+              className="w-full text-lg bg-transparent border-none outline-none placeholder:text-gray-400 text-textColor"
             />
           </div>
-          <div className="w-full py-2 border-b border-gray-300 flex items-center gap-2">
-            <MdAttachMoney className="text-gray-700 text-2xl" />
+          <div className="flex items-center w-full gap-2 py-2 border-b border-gray-300">
+            <MdAttachMoney className="text-2xl text-gray-700" />
             <input
               type="text"
               required
               value={price}
               onChange={(e) => setPrice(e.target.value)}
               placeholder="Price"
-              className="w-full text-lg bg-transparent outline-none border-none placeholder:text-gray-400 text-textColor"
+              className="w-full text-lg bg-transparent border-none outline-none placeholder:text-gray-400 text-textColor"
             />
           </div>
         </div>
@@ -281,7 +296,7 @@ const CreateContainer = () => {
           <button
             type="button"
             onClick={saveDetails}
-            className="ml-0 md:ml-auto w-full md:w-auto border-none outline-none bg-emerald-500 px-12 py-2 rounded-lg text-lg text-white font-semibold"
+            className="w-full px-12 py-2 ml-0 text-lg font-semibold text-white border-none rounded-lg outline-none md:ml-auto md:w-auto bg-emerald-500"
           >
             Save
           </button>

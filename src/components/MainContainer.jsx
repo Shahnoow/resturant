@@ -2,16 +2,17 @@ import React, { useEffect, useRef, useState } from "react";
 import HomeContainer from "./HomeContainer";
 import { motion } from "framer-motion";
 import { MdChevronLeft, MdChevronRight } from "react-icons/md";
-// import RowContainer from "./RowContainer";
-// import { useStateValue } from "../context/StateProvider";
-// import MenuContainer from "./MenuContainer";
-// import CartContainer from "./CartContainer";
+import RowContainer from "./RowContainer";
+import { useStateValue } from "../context/StateProvider";
+
+import CartContainer from "./CartContainer";
+import MenuContainer from "./MenuContainer";
 
 const MainContainer = () => {
-  // const [{ foodItems, cartShow }, dispatch] = useStateValue();
-  // const [scrollValue, setScrollValue] = useState(0);
+  const [{ food_items, cartShow }, dispatch] = useStateValue();
+  const [scrollValue, setScrollValue] = useState(0);
 
-  // useEffect(() => {}, [scrollValue, cartShow]);
+  useEffect(() => {}, [scrollValue, cartShow]);
 
   return (
     <div className="flex flex-col items-center justify-center w-full h-auto ">
@@ -27,29 +28,29 @@ const MainContainer = () => {
             <motion.div
               whileTap={{ scale: 0.75 }}
               className="flex items-center justify-center w-8 h-8 bg-orange-300 rounded-lg cursor-pointer hover:bg-orange-500 hover:shadow-lg"
-              // onClick={() => setScrollValue(-200)}
+              onClick={() => setScrollValue(-200)}
             >
               <MdChevronLeft className="text-lg text-white" />
             </motion.div>
             <motion.div
               whileTap={{ scale: 0.75 }}
               className="flex items-center justify-center w-8 h-8 transition-all duration-100 ease-in-out bg-orange-300 rounded-lg cursor-pointer hover:bg-orange-500 hover:shadow-lg"
-              // onClick={() => setScrollValue(200)}
+              onClick={() => setScrollValue(200)}
             >
               <MdChevronRight className="text-lg text-white" />
             </motion.div>
           </div>
         </div>
-        {/* <RowContainer
+        <RowContainer
           scrollValue={scrollValue}
           flag={true}
-          data={foodItems?.filter((n) => n.category === "fruits")}
-        /> */}
+          data={food_items?.filter((n) => n.category === "fruits")}
+        />
       </section>
 
-      {/* <MenuContainer />
+      <MenuContainer />
 
-      {cartShow && <CartContainer />} */}
+      {cartShow && <CartContainer />}
     </div>
   );
 };

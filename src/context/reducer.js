@@ -18,7 +18,7 @@ const reducer = (state, action) => {
     case actionType.SET_FOOD_ITEMS:
       return {
         ...state,
-        foodItems: action.foodItems,
+        food_items: action.food_items,
       };
 
     case actionType.SET_CART_SHOW:

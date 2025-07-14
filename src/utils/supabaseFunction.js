@@ -18,7 +18,7 @@ export const saveItem = async (data) => {
 // Fetch all food items from Supabase, ordered by id descending
 export const getAllFoodItems = async () => {
   const { data, error } = await supabase
-    .from("foodItems")
+    .from("food_items")
     .select("*")
     .order("id", { ascending: false });
 
