@@ -4,10 +4,16 @@ import { categories } from "../utils/data";
 import { motion } from "framer-motion";
 import { IoFastFood } from "react-icons/io5";
 import RowContainer from "./RowContainer";
+
 const MenuContainer = () => {
   const [filter, setFilter] = useState("chicken");
+  const [{ food_items }] = useStateValue();
 
-  const [{ food_items }, dispatch] = useStateValue();
+  const handleKeyDown = (e, category) => {
+    if (e.key === "Enter" || e.key === " ") {
+      setFilter(category);
+    }
+  };
 
   return (
     <section className="w-full my-6" id="menu">
@@ -17,42 +23,42 @@ const MenuContainer = () => {
         </p>
 
         <div className="flex items-center justify-start w-full gap-8 py-6 overflow-x-scroll lg:justify-center scrollbar-none">
-          {categories &&
-            categories.map((category) => (
+          {categories.map((category) => {
+            const isSelected = filter === category.urlParamName;
+            return (
               <motion.div
                 whileTap={{ scale: 0.75 }}
                 key={category.id}
+                role="button"
+                tabIndex={0}
+                aria-pressed={isSelected}
                 className={`group ${
-                  filter === category.urlParamName ? "bg-cartNumBg" : "bg-card"
-                } w-24 min-w-[94px] h-28 cursor-pointer rounded-lg drop-shadow-xl flex flex-col gap-3 items-center justify-center hover:bg-cartNumBg `}
+                  isSelected ? "bg-cartNumBg" : "bg-card"
+                } w-24 min-w-[94px] h-28 cursor-pointer rounded-lg drop-shadow-xl flex flex-col gap-3 items-center justify-center hover:bg-cartNumBg`}
                 onClick={() => setFilter(category.urlParamName)}
+                onKeyDown={(e) => handleKeyDown(e, category.urlParamName)}
               >
                 <div
                   className={`w-10 h-10 rounded-full shadow-lg ${
-                    filter === category.urlParamName
-                      ? "bg-white"
-                      : "bg-cartNumBg"
+                    isSelected ? "bg-white" : "bg-cartNumBg"
                   } group-hover:bg-white flex items-center justify-center`}
                 >
                   <IoFastFood
                     className={`${
-                      filter === category.urlParamName
-                        ? "text-textColor"
-                        : "text-white"
+                      isSelected ? "text-textColor" : "text-white"
                     } group-hover:text-textColor text-lg`}
                   />
                 </div>
                 <p
                   className={`text-sm ${
-                    filter === category.urlParamName
-                      ? "text-white"
-                      : "text-textColor"
+                    isSelected ? "text-white" : "text-textColor"
                   } group-hover:text-white`}
                 >
                   {category.name}
                 </p>
               </motion.div>
-            ))}
+            );
+          })}
         </div>
 
         <div className="w-full">

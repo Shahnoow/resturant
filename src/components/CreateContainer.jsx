@@ -18,27 +18,101 @@ const CreateContainer = () => {
   const [title, setTitle] = useState("");
   const [calories, setCalories] = useState("");
   const [price, setPrice] = useState("");
-  const [category, setCategory] = useState(null);
+  const [category, setCategory] = useState("");
   const [imageAsset, setImageAsset] = useState(null);
   const [fields, setFields] = useState(true);
   const [alertStatus, setAlertStatus] = useState("danger");
   const [msg, setMsg] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [{ food_items }, dispatch] = useStateValue();
+
+  const [, dispatch] = useStateValue();
+
+  const fetchData = async () => {
+    const data = await getAllFoodItems();
+    dispatch({
+      type: actionType.SET_FOOD_ITEMS,
+      food_items: data,
+    });
+  };
+
+  const clearData = () => {
+    setTitle("");
+    setImageAsset(null);
+    setCalories("");
+    setPrice("");
+    setCategory("");
+  };
+
+  const saveItem = async (itemData) => {
+    const { error } = await supabase.from("food_items").insert([itemData]);
+    if (error) {
+      console.error("Database Insert Error:", error.message);
+      setFields(true);
+      setMsg("Error saving data to the database 😢");
+      setAlertStatus("danger");
+      setTimeout(() => {
+        setFields(false);
+      }, 4000);
+    }
+  };
+
+  const saveDetails = async () => {
+    setIsLoading(true);
+    try {
+      if (!title || !calories || !imageAsset || !price || !category) {
+        setFields(true);
+        setMsg("Required fields can't be empty");
+        setAlertStatus("danger");
+        setTimeout(() => {
+          setFields(false);
+          setIsLoading(false);
+        }, 4000);
+      } else {
+        const data = {
+          id: `${Date.now()}`,
+          title,
+          imageURL: imageAsset,
+          category,
+          calories,
+          qty: 1,
+          price,
+        };
+        await saveItem(data);
+        setIsLoading(false);
+        setFields(true);
+        setMsg("Data uploaded successfully 😊");
+        setAlertStatus("success");
+        setTimeout(() => {
+          setFields(false);
+        }, 4000);
+        clearData();
+        fetchData();
+      }
+    } catch (error) {
+      console.error(error);
+      setFields(true);
+      setMsg("Error while uploading: Try Again 🙇");
+      setAlertStatus("danger");
+      setTimeout(() => {
+        setFields(false);
+        setIsLoading(false);
+      }, 4000);
+    }
+  };
 
   const uploadImage = async (e) => {
     setIsLoading(true);
     const imageFile = e.target.files[0];
     const fileName = `${Date.now()}-${imageFile.name}`;
 
-    const { data, error } = await supabase.storage
+    const { error } = await supabase.storage
       .from("images")
       .upload(fileName, imageFile);
 
     if (error) {
       console.error("Upload Error:", error.message);
       setFields(true);
-      setMsg("Error while uploading : Try Again 🙇");
+      setMsg("Error while uploading: Try Again 🙇");
       setAlertStatus("danger");
       setTimeout(() => {
         setFields(false);
@@ -65,7 +139,6 @@ const CreateContainer = () => {
     if (!imageAsset) return;
 
     const fileName = imageAsset.split("/").pop();
-
     const { error } = await supabase.storage.from("images").remove([fileName]);
 
     if (error) {
@@ -87,88 +160,10 @@ const CreateContainer = () => {
     }
   };
 
-  const saveItem = async (itemData) => {
-    const { data, error } = await supabase
-      .from("food_items")
-      .insert([itemData]);
-
-    if (error) {
-      console.error("Database Insert Error:", error.message);
-      setFields(true);
-      setMsg("Error saving data to the database 😢");
-      setAlertStatus("danger");
-      setTimeout(() => {
-        setFields(false);
-      }, 4000);
-    }
-  };
-
-  const saveDetails = () => {
-    setIsLoading(true);
-    try {
-      if (!title || !calories || !imageAsset || !price || !category) {
-        setFields(true);
-        setMsg("Required fields can't be empty");
-        setAlertStatus("danger");
-        setTimeout(() => {
-          setFields(false);
-          setIsLoading(false);
-        }, 4000);
-      } else {
-        const data = {
-          id: `${Date.now()}`,
-          title,
-          imageURL: imageAsset,
-          category,
-          calories,
-          qty: 1,
-          price,
-        };
-        saveItem(data);
-        setIsLoading(false);
-        setFields(true);
-        setMsg("Data Uploaded successfully 😊");
-        setAlertStatus("success");
-        setTimeout(() => {
-          setFields(false);
-        }, 4000);
-        clearData();
-      }
-    } catch (error) {
-      console.log(error);
-      setFields(true);
-      setMsg("Error while uploading : Try Again 🙇");
-      setAlertStatus("danger");
-      setTimeout(() => {
-        setFields(false);
-        setIsLoading(false);
-      }, 4000);
-    }
-    fetchData();
-  };
-
-  const clearData = () => {
-    setTitle("");
-    setImageAsset(null);
-    setCalories("");
-    setPrice("");
-    setCategory(null);
-  };
-
-  const fetchData = async () => {
-    await getAllFoodItems().then((data) => {
-      console.log(data);
-      dispatch({
-        type: actionType.SET_FOOD_ITEMS,
-        food_items: data,
-      });
-    });
-  };
-
   return (
     <div className="flex items-center justify-center w-full min-h-screen">
       <div className="w-[90%] md:w-[50%] border border-gray-300 rounded-lg p-4 flex flex-col items-center justify-center gap-4">
-        {fields && (
+        {fields && msg && (
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -202,20 +197,16 @@ const CreateContainer = () => {
             onChange={(e) => setCategory(e.target.value)}
             className="w-full p-2 text-base border-b-2 border-gray-200 rounded-md outline-none cursor-pointer"
           >
-            <option value="" className="bg-white">
-              Select Category
-            </option>
-
-            {categories &&
-              categories.map((item) => (
-                <option
-                  key={item.id}
-                  className="text-base capitalize bg-white text-headingColor"
-                  value={item.urlParamName}
-                >
-                  {item.name}
-                </option>
-              ))}
+            <option value="">Select Category</option>
+            {categories?.map((item) => (
+              <option
+                key={item.id}
+                value={item.urlParamName}
+                className="text-base capitalize bg-white text-headingColor"
+              >
+                {item.name}
+              </option>
+            ))}
           </select>
         </div>
 
@@ -226,40 +217,35 @@ const CreateContainer = () => {
           ) : (
             <>
               {!imageAsset ? (
-                <>
-                  <label className="flex flex-col items-center justify-center w-full h-full cursor-pointer">
-                    <div className="flex flex-col items-center justify-center w-full h-full gap-2">
-                      <MdCloudUpload className="text-3xl text-gray-500 hover:text-gray-700" />
-                      <p className="text-gray-500 hover:text-gray-700">
-                        Click here to upload
-                      </p>
-                    </div>
-                    <input
-                      type="file"
-                      name="uploadimage"
-                      accept="image/*"
-                      onChange={uploadImage}
-                      className="w-0 h-0"
-                    />
-                  </label>
-                </>
-              ) : (
-                <>
-                  <div className="relative h-full">
-                    <img
-                      src={imageAsset}
-                      alt="uploaded"
-                      className="object-cover w-full h-full"
-                    />
-                    <button
-                      type="button"
-                      className="absolute p-3 text-xl transition-all bg-red-500 rounded-full outline-none cursor-pointer bottom-3 right-3 hover:shadow-md"
-                      onClick={deleteImage}
-                    >
-                      <MdDelete className="text-white" />
-                    </button>
+                <label className="flex flex-col items-center justify-center w-full h-full cursor-pointer">
+                  <div className="flex flex-col items-center justify-center w-full h-full gap-2">
+                    <MdCloudUpload className="text-3xl text-gray-500 hover:text-gray-700" />
+                    <p className="text-gray-500 hover:text-gray-700">
+                      Click here to upload
+                    </p>
                   </div>
-                </>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={uploadImage}
+                    className="w-0 h-0"
+                  />
+                </label>
+              ) : (
+                <div className="relative h-full">
+                  <img
+                    src={imageAsset}
+                    alt="Uploaded item"
+                    className="object-cover w-full h-full"
+                  />
+                  <button
+                    type="button"
+                    className="absolute p-3 text-xl transition-all bg-red-500 rounded-full outline-none cursor-pointer bottom-3 right-3 hover:shadow-md"
+                    onClick={deleteImage}
+                  >
+                    <MdDelete className="text-white" />
+                  </button>
+                </div>
               )}
             </>
           )}

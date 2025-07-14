@@ -1,36 +1,50 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useStateValue } from "../context/StateProvider";
 import { actionType } from "../context/reducer";
 import { motion } from "framer-motion";
 import { MdShoppingBasket } from "react-icons/md";
 import NotFound from "../img/NotFound.svg";
+
 const RowContainer = ({ flag, data, scrollValue }) => {
   const rowContainer = useRef();
-
-  const [items, setItems] = useState([]);
-
   const [{ cartItems }, dispatch] = useStateValue();
 
-  const addtocart = () => {
-    dispatch({
-      type: actionType.SET_CARTITEMS,
-      cartItems: items,
-    });
-    localStorage.setItem("cartItems", JSON.stringify(items));
-  };
-
+  // Scroll effect
   useEffect(() => {
-    rowContainer.current.scrollLeft += scrollValue;
+    if (rowContainer.current) {
+      rowContainer.current.scrollLeft += scrollValue;
+    }
   }, [scrollValue]);
 
-  useEffect(() => {
-    addtocart();
-  }, [items]);
+  // Handler to add item to cart
+  const addToCart = (item) => {
+    // Check if item already exists in cart
+    const existingItem = cartItems.find((cartItem) => cartItem.id === item.id);
+    let updatedCart = [];
+
+    if (existingItem) {
+      // If exists, increase qty
+      updatedCart = cartItems.map((cartItem) =>
+        cartItem.id === item.id
+          ? { ...cartItem, qty: cartItem.qty + 1 }
+          : cartItem
+      );
+    } else {
+      // If new item, add with qty 1
+      updatedCart = [...cartItems, { ...item, qty: 1 }];
+    }
+
+    dispatch({
+      type: actionType.SET_CARTITEMS,
+      cartItems: updatedCart,
+    });
+    localStorage.setItem("cartItems", JSON.stringify(updatedCart));
+  };
 
   return (
     <div
       ref={rowContainer}
-      className={`w-full flex items-center gap-3  my-12 scroll-smooth  ${
+      className={`w-full flex items-center gap-3 my-12 scroll-smooth ${
         flag
           ? "overflow-x-scroll scrollbar-none"
           : "overflow-x-hidden flex-wrap justify-center"
@@ -40,7 +54,7 @@ const RowContainer = ({ flag, data, scrollValue }) => {
         data.map((item) => (
           <div
             key={item?.id}
-            className="w-275 h-[175px] min-w-[275px] md:w-300 md:min-w-[300px]  bg-cardOverlay rounded-lg py-2 px-4  my-12 backdrop-blur-lg hover:drop-shadow-lg flex flex-col items-center justify-evenly relative"
+            className="w-275 h-[175px] min-w-[275px] md:w-300 md:min-w-[300px] bg-cardOverlay rounded-lg py-2 px-4 my-12 backdrop-blur-lg hover:drop-shadow-lg flex flex-col items-center justify-evenly relative"
           >
             <div className="flex items-center justify-between w-full">
               <motion.div
@@ -49,14 +63,14 @@ const RowContainer = ({ flag, data, scrollValue }) => {
               >
                 <img
                   src={item?.imageURL}
-                  alt=""
+                  alt={item?.title || "Food item"}
                   className="object-contain w-full h-full"
                 />
               </motion.div>
               <motion.div
                 whileTap={{ scale: 0.75 }}
                 className="flex items-center justify-center w-8 h-8 -mt-8 bg-red-600 rounded-full cursor-pointer hover:shadow-md"
-                onClick={() => setItems([...cartItems, item])}
+                onClick={() => addToCart(item)}
               >
                 <MdShoppingBasket className="text-white" />
               </motion.div>
@@ -79,7 +93,7 @@ const RowContainer = ({ flag, data, scrollValue }) => {
         ))
       ) : (
         <div className="flex flex-col items-center justify-center w-full">
-          <img src={NotFound} className="h-340" />
+          <img src={NotFound} alt="Not Found" className="h-340" />
           <p className="my-2 text-xl font-semibold text-headingColor">
             Items Not Available
           </p>

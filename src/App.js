@@ -12,13 +12,15 @@ function App() {
   const [{ food_items }, dispatch] = useStateValue();
 
   const fetchData = async () => {
-    await getAllFoodItems().then((data) => {
-      // console.log(data);
+    try {
+      const data = await getAllFoodItems();
       dispatch({
         type: actionType.SET_FOOD_ITEMS,
         food_items: data,
       });
-    });
+    } catch (error) {
+      console.error("Failed to fetch food items:", error);
+    }
   };
 
   useEffect(() => {
@@ -26,10 +28,9 @@ function App() {
   }, []);
 
   return (
-    <AnimatePresence exitBeforeEnter>
+    <AnimatePresence mode="wait">
       <div className="flex flex-col w-screen h-auto bg-primary">
         <Header />
-
         <main className="w-full px-4 py-4 mt-14 md:mt-20 md:px-16">
           <Routes>
             <Route path="/*" element={<MainContainer />} />

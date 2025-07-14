@@ -20,19 +20,18 @@ const CartContainer = () => {
   };
 
   useEffect(() => {
-    let totalPrice = cartItems.reduce(function (accumulator, item) {
-      return accumulator + item.qty * item.price;
-    }, 0);
+    const totalPrice = cartItems.reduce(
+      (accumulator, item) => accumulator + item.qty * item.price,
+      0
+    );
     setTot(totalPrice);
-    console.log(tot);
-  }, [tot, flag]);
+  }, [cartItems, flag]);
 
   const clearCart = () => {
     dispatch({
       type: actionType.SET_CARTITEMS,
       cartItems: [],
     });
-
     localStorage.setItem("cartItems", JSON.stringify([]));
   };
 
@@ -48,7 +47,6 @@ const CartContainer = () => {
           <MdOutlineKeyboardBackspace className="text-3xl text-textColor" />
         </motion.div>
         <p className="text-lg font-semibold text-textColor">Cart</p>
-
         <motion.p
           whileTap={{ scale: 0.75 }}
           className="flex items-center gap-2 p-1 px-2 my-2 text-base bg-gray-100 rounded-md cursor-pointer hover:shadow-md text-textColor"
@@ -63,28 +61,25 @@ const CartContainer = () => {
         <div className="w-full h-full bg-cartBg rounded-t-[2rem] flex flex-col">
           {/* cart Items section */}
           <div className="flex flex-col w-full gap-3 px-6 py-10 overflow-y-scroll h-340 md:h-42 scrollbar-none">
-            {/* cart Item */}
-            {cartItems &&
-              cartItems.length > 0 &&
-              cartItems.map((item) => (
-                <CartItem
-                  key={item.id}
-                  item={item}
-                  setFlag={setFlag}
-                  flag={flag}
-                />
-              ))}
+            {cartItems.map((item) => (
+              <CartItem
+                key={item.id}
+                item={item}
+                setFlag={setFlag}
+                flag={flag}
+              />
+            ))}
           </div>
 
           {/* cart total section */}
           <div className="w-full flex-1 bg-cartTotal rounded-t-[2rem] flex flex-col items-center justify-evenly px-8 py-2">
             <div className="flex items-center justify-between w-full">
               <p className="text-lg text-gray-400">Sub Total</p>
-              <p className="text-lg text-gray-400">$ {tot}</p>
+              <p className="text-lg text-gray-400">$ {tot.toFixed(2)}</p>
             </div>
             <div className="flex items-center justify-between w-full">
               <p className="text-lg text-gray-400">Delivery</p>
-              <p className="text-lg text-gray-400">$ 2.5</p>
+              <p className="text-lg text-gray-400">$ 2.50</p>
             </div>
 
             <div className="w-full my-2 border-b border-gray-600"></div>
@@ -92,7 +87,7 @@ const CartContainer = () => {
             <div className="flex items-center justify-between w-full">
               <p className="text-xl font-semibold text-gray-200">Total</p>
               <p className="text-xl font-semibold text-gray-200">
-                ${tot + 2.5}
+                ${Number(tot + 2.5).toFixed(2)}
               </p>
             </div>
 
@@ -117,7 +112,7 @@ const CartContainer = () => {
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center w-full h-full gap-6">
-          <img src={EmptyCart} className="w-300" alt="" />
+          <img src={EmptyCart} className="w-300" alt="Empty Cart" />
           <p className="text-xl font-semibold text-textColor">
             Add some items to your cart
           </p>
