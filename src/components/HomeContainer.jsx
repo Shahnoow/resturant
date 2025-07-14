@@ -5,76 +5,76 @@ import { heroData } from "../utils/data";
 
 const HomeContainer = () => {
   return (
-    <section className="grid w-full grid-cols-1 gap-4 md:grid-cols-2" id="home">
-      {/* Left Section */}
-      <div className="flex flex-col items-start justify-center gap-6 px-4 py-6 md:px-8">
-        <div className="flex items-center gap-2 px-4 py-1 bg-orange-100 rounded-full">
+    <section className="grid w-full grid-cols-1 gap-2 md:grid-cols-2" id="home">
+      <div className="flex flex-col items-start justify-center flex-1 gap-6 py-2">
+        {/* Left content remains the same */}
+        <div className="flex items-center justify-center gap-2 px-4 py-1 bg-orange-100 rounded-full">
           <p className="text-base font-semibold text-orange-500">
             Bike Delivery
           </p>
           <div className="w-8 h-8 overflow-hidden bg-white rounded-full drop-shadow-xl">
             <img
               src={Delivery}
-              alt="Bike Delivery Icon"
               className="object-contain w-full h-full"
-              loading="lazy"
+              alt="delivery"
             />
           </div>
         </div>
 
-        <h1 className="text-[2.5rem] lg:text-[4.5rem] font-bold tracking-wide text-headingColor leading-tight">
-          The Fastest Delivery in{" "}
+        <p className="text-[2.5rem] lg:text-[4.5rem] font-bold tracking-wide text-headingColor">
+          The Fastest Delivery in
           <span className="text-orange-600 text-[3rem] lg:text-[5rem]">
             Your City
           </span>
-        </h1>
+        </p>
 
-        <p className="text-base text-center text-textColor md:text-left md:w-[80%]">
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Distinctio
-          est nam voluptatum porro iusto deserunt. Minus eos sunt dolores
-          repellat suscipit.
+        <p className="text-base text-textColor text-center md:text-left md:w-[80%]">
+          Get ready for the quickest delivery in town! Fresh, hot, and delicious
+          meals zooming straight to your door—no waiting, just pure flavor and
+          satisfaction delivered fast. Don’t just crave it, get it NOW!
         </p>
 
         <button
           type="button"
-          className="w-full px-6 py-2 font-semibold text-white transition-all duration-150 ease-in-out rounded-lg bg-gradient-to-br from-orange-400 to-orange-500 hover:shadow-lg md:w-auto"
+          className="w-full px-4 py-2 transition-all duration-100 ease-in-out rounded-lg bg-gradient-to-br from-orange-400 to-orange-500 md:w-auto hover:shadow-lg"
         >
           Order Now
         </button>
       </div>
 
-      {/* Right Section */}
-      <div className="relative flex items-center justify-center py-4">
+      {/* Right content with improved mobile responsiveness */}
+      <div className="relative flex items-center flex-1 py-2">
         <img
           src={HeroBg}
-          alt="Hero Background"
-          className="object-contain w-full ml-auto h-420 lg:w-auto lg:h-650"
-          loading="lazy"
+          className="w-full ml-auto h-[300px] md:h-420 lg:w-auto lg:h-650"
+          alt="hero-bg"
         />
 
-        <div className="absolute top-0 left-0 z-10 flex flex-wrap items-center justify-center w-full h-full gap-4 px-4 py-4 lg:px-20">
-          {heroData?.map((item) => (
-            <div
-              key={item.id}
-              className="flex flex-col items-center justify-center p-4 lg:w-190 bg-cardOverlay backdrop-blur-md rounded-3xl drop-shadow-lg"
-            >
-              <img
-                src={item.imageSrc}
-                alt={item.name}
-                className="w-20 -mt-10 lg:w-40 lg:-mt-20"
-                loading="lazy"
-              />
-              <p className="mt-2 text-base font-semibold lg:text-xl text-textColor lg:mt-4">
-                {item.name}
-              </p>
-              <p className="text-[12px] lg:text-sm text-lighttextGray font-semibold my-1 lg:my-3 text-center">
-                {item.decp}
-              </p>
-              <p className="text-sm font-semibold text-headingColor">
-                <span className="text-xs text-red-600">$</span> {item.price}
-              </p>
-            </div>
-          ))}
+        <div className="absolute top-0 left-0 flex flex-wrap items-center justify-center w-full h-full gap-2 px-2 py-4 md:gap-4 lg:px-20">
+          {heroData &&
+            heroData.map((n) => (
+              <div
+                key={n.id}
+                className="flex flex-col items-center justify-center w-24 p-2 h-36 md:w-32 md:h-44 lg:w-190 lg:h-auto bg-cardOverlay backdrop-blur-md rounded-3xl drop-shadow-lg"
+              >
+                <img
+                  src={n.imageSrc}
+                  className="w-12 -mt-6 md:w-16 md:-mt-8 lg:w-40 lg:-mt-20"
+                  alt={n.name}
+                />
+                <p className="mt-1 text-xs font-semibold md:text-sm lg:text-xl text-textColor lg:mt-4">
+                  {n.name}
+                </p>
+
+                <p className="text-[8px] md:text-[10px] lg:text-sm text-lighttextGray font-semibold my-1 lg:my-3">
+                  {n.decp}
+                </p>
+
+                <p className="text-xs font-semibold md:text-sm text-headingColor">
+                  <span className="text-[10px] text-red-600">$</span> {n.price}
+                </p>
+              </div>
+            ))}
         </div>
       </div>
     </section>
