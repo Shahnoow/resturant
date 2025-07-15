@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+// AccountSettings.jsx
+import React, { useState, useRef, useEffect } from "react";
 import { MdAdd, MdLogout, MdEmail, MdLock, MdPerson } from "react-icons/md";
 import { FcGoogle } from "react-icons/fc";
-// import { FaFacebook } from "react-icons/fa";
 import Avatar from "../img/avatar.png";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
@@ -9,27 +9,59 @@ import {
   getAuth,
   signInWithPopup,
   GoogleAuthProvider,
-  //   FacebookAuthProvider,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  updateProfile,
 } from "firebase/auth";
 import { app } from "../firebase.config";
 import { useStateValue } from "../context/StateProvider";
 import { actionType } from "../context/reducer";
+import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
+import { firestore } from "../firebase.config";
+import { toast } from "react-toastify";
+
+const toastStyles = {
+  success: {
+    background: "#4BB543",
+    color: "#fff",
+  },
+  error: {
+    background: "#FF3333",
+    color: "#fff",
+  },
+  info: {
+    background: "#33B5FF",
+    color: "#fff",
+  },
+};
 
 const AccountSettings = () => {
   const auth = getAuth(app);
   const googleProvider = new GoogleAuthProvider();
-  //   const facebookProvider = new FacebookAuthProvider();
   const [{ user }, dispatch] = useStateValue();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [authView, setAuthView] = useState("login"); // 'login' or 'signup'
+  const [authView, setAuthView] = useState("login");
   const [formData, setFormData] = useState({
     email: "",
     password: "",
     name: "",
   });
+
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const handleInputChange = (e) => {
     setFormData({
@@ -38,31 +70,50 @@ const AccountSettings = () => {
     });
   };
 
-  // Google Login
-  const loginWithGoogle = async () => {
-    try {
-      const {
-        user: { providerData },
-      } = await signInWithPopup(auth, googleProvider);
-      updateUserState(providerData[0]);
-    } catch (error) {
-      console.error("Google login error:", error);
+  const saveUserToFirestore = async (userData) => {
+    if (!userData?.uid) return;
+
+    const userRef = doc(firestore, "users", userData.uid);
+    const userSnap = await getDoc(userRef);
+
+    if (!userSnap.exists()) {
+      await setDoc(userRef, {
+        name: userData.displayName || "No Name",
+        email: userData.email,
+        photoURL: userData.photoURL || Avatar,
+        createdAt: serverTimestamp(),
+      });
     }
   };
 
-  // Facebook Login
-  //   const loginWithFacebook = async () => {
-  //     try {
-  //       const {
-  //         user: { providerData },
-  //       } = await signInWithPopup(auth, facebookProvider);
-  //       updateUserState(providerData[0]);
-  //     } catch (error) {
-  //       console.error("Facebook login error:", error);
-  //     }
-  //   };
+  const updateUserState = async (userData) => {
+    dispatch({
+      type: actionType.SET_USER,
+      user: userData,
+    });
+    localStorage.setItem("user", JSON.stringify(userData));
 
-  // Email/Password Signup
+    await saveUserToFirestore(userData);
+    setIsMenuOpen(false);
+  };
+
+  const loginWithGoogle = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const loggedInUser = result.user;
+
+      updateUserState({
+        uid: loggedInUser.uid,
+        displayName: loggedInUser.displayName || "Google User",
+        email: loggedInUser.email,
+        photoURL: loggedInUser.photoURL || Avatar,
+      });
+      toast.success("Login successful!", { style: toastStyles.success });
+    } catch (error) {
+      toast.error("Google login failed!", { style: toastStyles.error });
+    }
+  };
+
   const handleSignUp = async (e) => {
     e.preventDefault();
     try {
@@ -71,17 +122,31 @@ const AccountSettings = () => {
         formData.email,
         formData.password
       );
-      updateUserState({
+
+      await updateProfile(user, { displayName: formData.name });
+
+      await updateUserState({
+        uid: user.uid,
         displayName: formData.name,
         email: user.email,
         photoURL: Avatar,
       });
+      toast.success("Account created successfully!", {
+        style: toastStyles.success,
+      });
     } catch (error) {
-      console.error("Signup error:", error);
+      if (error.code === "auth/email-already-in-use") {
+        toast.error("Email address already in use.", {
+          style: toastStyles.error,
+        });
+      } else if (error.code === "auth/invalid-email") {
+        toast.error("Invalid email address.", { style: toastStyles.error });
+      } else {
+        toast.error("Failed to create account.", { style: toastStyles.error });
+      }
     }
   };
 
-  // Email/Password Login
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
@@ -90,23 +155,27 @@ const AccountSettings = () => {
         formData.email,
         formData.password
       );
+
       updateUserState({
+        uid: user.uid,
         displayName: user.displayName,
         email: user.email,
         photoURL: user.photoURL || Avatar,
       });
+      toast.success("Login successful!", { style: toastStyles.success });
     } catch (error) {
-      console.error("Login error:", error);
+      if (error.code === "auth/user-not-found") {
+        toast.error("No account found with this email.", {
+          style: toastStyles.error,
+        });
+      } else if (error.code === "auth/wrong-password") {
+        toast.error("Wrong password.", { style: toastStyles.error });
+      } else if (error.code === "auth/invalid-email") {
+        toast.error("Invalid email address.", { style: toastStyles.error });
+      } else {
+        toast.error("Failed to login.", { style: toastStyles.error });
+      }
     }
-  };
-
-  const updateUserState = (userData) => {
-    dispatch({
-      type: actionType.SET_USER,
-      user: userData,
-    });
-    localStorage.setItem("user", JSON.stringify(userData));
-    setIsMenuOpen(false);
   };
 
   const logout = () => {
@@ -116,23 +185,20 @@ const AccountSettings = () => {
       type: actionType.SET_USER,
       user: null,
     });
+    toast.info("Logged out.", { style: toastStyles.info });
   };
 
   return (
-    <div className="relative">
-      {/* Avatar Button */}
+    <div className="relative" ref={dropdownRef}>
       <motion.img
         whileTap={{ scale: 0.9 }}
         src={user ? user.photoURL : Avatar}
         className="w-10 h-10 border-2 border-white rounded-full shadow-lg cursor-pointer"
-        alt="userprofile"
-        onClick={() =>
-          user ? setIsMenuOpen(!isMenuOpen) : setAuthView("login")
-        }
+        alt="User Avatar"
+        onClick={() => setIsMenuOpen(!isMenuOpen)}
       />
 
-      {/* Auth Dropdown */}
-      {(!user || isMenuOpen) && (
+      {isMenuOpen && (
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -140,7 +206,6 @@ const AccountSettings = () => {
           className="absolute right-0 z-50 p-4 bg-white rounded-lg shadow-xl w-72 md:right-0 md:left-auto top-12"
         >
           {user ? (
-            // User is logged in - show account menu
             <>
               {user.email === "shahnawazjawed9@gmail.com" && (
                 <Link to="/createItem">
@@ -159,7 +224,6 @@ const AccountSettings = () => {
               </div>
             </>
           ) : (
-            // User is not logged in - show auth forms
             <div className="space-y-4">
               <div className="flex gap-4">
                 <button
@@ -168,12 +232,6 @@ const AccountSettings = () => {
                 >
                   <FcGoogle className="text-xl" />
                 </button>
-                {/* <button
-                  onClick={loginWithFacebook}
-                  className="flex items-center justify-center w-full p-2 text-white bg-blue-600 rounded-md hover:bg-blue-700"
-                >
-                  <FaFacebook className="text-xl" />
-                </button> */}
               </div>
 
               <div className="relative">

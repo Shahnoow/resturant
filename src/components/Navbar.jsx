@@ -24,7 +24,7 @@ const Navbar = () => {
       <div className="items-center justify-between hidden w-full h-full md:flex">
         <Link to={"/"} className="flex items-center gap-2">
           <img src={Logo} className="object-cover w-8" alt="logo" />
-          <p className="text-xl font-bold text-headingColor">City</p>
+          <p className="text-xl font-bold text-headingColor">Foodzy</p>
         </Link>
 
         <div className="flex items-center gap-8">
