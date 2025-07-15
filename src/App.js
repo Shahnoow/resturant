@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Header, MainContainer } from "./components";
+import { MainContainer } from "./components";
 import { Route, Routes } from "react-router-dom";
 
 import CreateContainer from "./components/CreateContainer";
