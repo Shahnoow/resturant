@@ -81,7 +81,7 @@ const Navbar = () => {
         <Link to={"/"} className="absolute transform -translate-x-1/2 left-1/2">
           <div className="flex items-center gap-2">
             <img src={Logo} className="object-cover w-8" alt="logo" />
-            <p className="text-xl font-bold text-headingColor">City</p>
+            <p className="text-xl font-bold text-headingColor">Foodzy</p>
           </div>
         </Link>
 
