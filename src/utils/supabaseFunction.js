@@ -3,11 +3,10 @@ import { supabase } from "../supabaseClient"; // your initialized supabase clien
 // Save a new food item to Supabase
 export const saveItem = async (data) => {
   const itemWithId = {
-    id: Date.now().toString(), // unique string ID based on timestamp
+    id: Date.now().toString(),
     ...data,
   };
-
-  const { error } = await supabase.from("foodItems").insert([itemWithId]);
+  const { error } = await supabase.from("food_items").insert([itemWithId]);
 
   if (error) {
     console.error("Error saving item:", error);
@@ -15,7 +14,6 @@ export const saveItem = async (data) => {
   }
 };
 
-// Fetch all food items from Supabase, ordered by id descending
 export const getAllFoodItems = async () => {
   const { data, error } = await supabase
     .from("food_items")
@@ -26,6 +24,5 @@ export const getAllFoodItems = async () => {
     console.error("Error fetching food items:", error);
     throw error;
   }
-
   return data;
 };

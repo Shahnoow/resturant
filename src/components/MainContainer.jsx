@@ -6,6 +6,12 @@ import RowContainer from "./RowContainer";
 import { useStateValue } from "../context/StateProvider";
 import CartContainer from "./CartContainer";
 import MenuContainer from "./MenuContainer";
+import HowItWorks from "./HowItWorks";
+import BestRestaurants from "./BestRestaurants";
+import FoodFavorites from "./FoodFavorites";
+import ServiceStats from "./ServiceStats";
+import Partnership from "./Partnership";
+import NewsletterSubscription from "./NewsletterSubscription";
 
 const MainContainer = () => {
   const [{ food_items, cartShow }] = useStateValue();
@@ -55,6 +61,12 @@ const MainContainer = () => {
       <MenuContainer />
 
       {cartShow && <CartContainer />}
+      <HowItWorks />
+      <BestRestaurants />
+      <FoodFavorites />
+      <ServiceStats />
+      <Partnership />
+      <NewsletterSubscription />
     </div>
   );
 };

@@ -2,6 +2,7 @@ import React from "react";
 import Delivery from "../img/delivery.png";
 import HeroBg from "../img/heroBg.png";
 import { heroData } from "../utils/data";
+// import HowItWorks from "./HowItWorks";
 
 const HomeContainer = () => {
   return (
@@ -77,6 +78,7 @@ const HomeContainer = () => {
             ))}
         </div>
       </div>
+      {/* <HowItWorks /> */}
     </section>
   );
 };

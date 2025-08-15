@@ -55,6 +55,10 @@ module.exports = {
         cartBg: "#282a2c",
         cartItem: "#2e3033",
         cartTotal: "#343739",
+        footerBg: "#363636", // Added footer background color
+      },
+      fontFamily: {
+        times: ['"Times New Roman"', "serif"], // Added Times New Roman font
       },
     },
   },

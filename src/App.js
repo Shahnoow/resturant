@@ -12,6 +12,14 @@ import Navbar from "./components/Navbar";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import HowItWorks from "./components/HowItWorks";
+import BestRestaurants from "./components/BestRestaurants";
+import ServiceStats from "./components/ServiceStats";
+import Footer from "./components/Footer";
+import AboutUs from "./components/AboutUs";
+import Restaurants from "./components/Restaurants";
+import MenuPage from "./components/MenuPage";
+import ServicePage from "./components/ServicePage";
 
 function App() {
   const [, dispatch] = useStateValue();
@@ -35,10 +43,15 @@ function App() {
 
         <main className="w-full px-4 py-4 mt-14 md:mt-20 md:px-16">
           <Routes>
+            <Route path="/about" element={<AboutUs />} />
+            <Route path="/menu" element={<MenuPage />} />
+            <Route path="/best-restaurants" element={<Restaurants />} />
+            <Route path="/service-stats" element={<ServicePage />} />
             <Route path="/*" element={<MainContainer />} />
             <Route path="/createItem" element={<CreateContainer />} />
           </Routes>
         </main>
+        <Footer />
 
         <ToastContainer
           position="top-center"
