@@ -75,13 +75,13 @@ const ServicePage = () => {
 
         <div className="flex gap-6">
           <a
-            href="#"
+            href="##"
             className="flex items-center gap-2 px-6 py-3 text-white transition bg-black rounded-lg hover:bg-gray-800"
           >
             <FaApple size={24} /> <span>Get it on App Store</span>
           </a>
           <a
-            href="#"
+            href="##"
             className="flex items-center gap-2 px-6 py-3 text-white transition bg-green-600 rounded-lg hover:bg-green-700"
           >
             <FaGooglePlay size={24} /> <span>Get it on Google Play</span>
