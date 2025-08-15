@@ -12,9 +12,9 @@ import Navbar from "./components/Navbar";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import HowItWorks from "./components/HowItWorks";
-import BestRestaurants from "./components/BestRestaurants";
-import ServiceStats from "./components/ServiceStats";
+// import HowItWorks from "./components/HowItWorks";
+// import BestRestaurants from "./components/BestRestaurants";
+// import ServiceStats from "./components/ServiceStats";
 import Footer from "./components/Footer";
 import AboutUs from "./components/AboutUs";
 import Restaurants from "./components/Restaurants";
