@@ -1,6 +1,6 @@
-import selectresturant from "../img/selectrestaurant.jpg";
-import selectmenu from "../img/selectmenu.jpg";
-import waitdelivery from "../img/waitdelivery.jpg";
+import selectresturant from "../img/selectrestaurant.png";
+import selectmenu from "../img/selectmenu.png";
+import waitdelivery from "../img/waitdelivery.png";
 
 const HowItWorks = () => {
   return (
